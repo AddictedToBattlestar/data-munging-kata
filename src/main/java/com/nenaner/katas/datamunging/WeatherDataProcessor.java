@@ -40,7 +40,7 @@ public class WeatherDataProcessor {
     }
 
     private boolean isNewLineShorter(List<Integer> newLineData) {
-        return lineWithSmallestTemperatureSpread == null || (lineWithSmallestTemperatureSpread.get(2) - lineWithSmallestTemperatureSpread.get(1) > (newLineData.get(2) - newLineData.get(1)));
+        return lineWithSmallestTemperatureSpread == null || (lineWithSmallestTemperatureSpread.get(1) - lineWithSmallestTemperatureSpread.get(2) > (newLineData.get(1) - newLineData.get(2)));
     }
 
     private List<Integer> parseLineData(String lineData) {

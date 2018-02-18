@@ -52,7 +52,7 @@ public class WeatherDataProcessorTest {
 
     @Test
     public void basicLoggingTestVariation() throws IOException, URISyntaxException {
-        setupFakeInputStreamFromResourceFile(generateFakeInputData("4", "41", 42));
+        setupFakeInputStreamFromResourceFile(generateFakeInputData("4", "41", 40));
 
         subject.outputDayWithSmallestTemperatureSpread();
 
@@ -61,7 +61,7 @@ public class WeatherDataProcessorTest {
 
     @Test
     public void itHandlesTheSummaryRecordAtTheEnd() throws IOException, URISyntaxException {
-        setupFakeInputStreamFromResourceFile(generateFakeInputData("mo", "41", 42));
+        setupFakeInputStreamFromResourceFile(generateFakeInputData("mo", "41", 40));
 
         subject.outputDayWithSmallestTemperatureSpread();
 
@@ -70,7 +70,7 @@ public class WeatherDataProcessorTest {
 
     @Test
     public void itRemovesUndesirableCharacters() throws IOException, URISyntaxException {
-        setupFakeInputStreamFromResourceFile(generateFakeInputData("4", "41*", 42));
+        setupFakeInputStreamFromResourceFile(generateFakeInputData("4", "41*", 40));
 
         subject.outputDayWithSmallestTemperatureSpread();
 
@@ -80,18 +80,18 @@ public class WeatherDataProcessorTest {
 
     private void setupFakeInputStreamFromResourceFile(String additionalDataToAppend) throws URISyntaxException, IOException {
         List<String> fakeInputStreamData = new ArrayList<>();
-        fakeInputStreamData.add(generateFakeInputData("1", "10", 20));
-        fakeInputStreamData.add(generateFakeInputData("2", "20", 28));
-        fakeInputStreamData.add(generateFakeInputData("3", "30", 41));
+        fakeInputStreamData.add(generateFakeInputData("1", "20", 10));
+        fakeInputStreamData.add(generateFakeInputData("2", "28", 20));
+        fakeInputStreamData.add(generateFakeInputData("3", "41", 30));
         if (additionalDataToAppend != null) {
             fakeInputStreamData.add(additionalDataToAppend);
         }
         when(mockResourceFileHelper.getResourceFileAsInputStream(anyString())).thenReturn(fakeInputStreamData.stream());
     }
 
-    private String generateFakeInputData(String dayOfMonth, String lowTemp, Integer highTemp) {
+    private String generateFakeInputData(String dayOfMonth, String highTemp, Integer lowTemp) {
         return StringUtils.leftPad(dayOfMonth, 4) +
-                StringUtils.leftPad(lowTemp, 4) +
-                StringUtils.leftPad(highTemp.toString(), 6);
+                StringUtils.leftPad(highTemp, 4) +
+                StringUtils.leftPad(lowTemp.toString(), 6);
     }
 }
