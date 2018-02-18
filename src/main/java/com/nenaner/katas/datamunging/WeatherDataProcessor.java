@@ -31,7 +31,7 @@ public class WeatherDataProcessor {
     private void parseAndEvaluateLineData(String lineStringData) {
         try {
             List<Integer> lineData = parseLineData(lineStringData);
-            if (isNewLineShorter(lineData)) {
+            if (doesLineHaveShorterTemperatureSpread(lineData)) {
                 lineWithSmallestTemperatureSpread = lineData;
             }
         } catch (Exception ex) {
@@ -39,7 +39,7 @@ public class WeatherDataProcessor {
         }
     }
 
-    private boolean isNewLineShorter(List<Integer> newLineData) {
+    private boolean doesLineHaveShorterTemperatureSpread(List<Integer> newLineData) {
         return lineWithSmallestTemperatureSpread == null || (lineWithSmallestTemperatureSpread.get(1) - lineWithSmallestTemperatureSpread.get(2) > (newLineData.get(1) - newLineData.get(2)));
     }
 
