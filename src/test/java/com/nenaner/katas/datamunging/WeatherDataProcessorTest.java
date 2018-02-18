@@ -10,7 +10,8 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -29,11 +30,7 @@ public class WeatherDataProcessorTest {
     public void setup() throws IOException, URISyntaxException {
         MockitoAnnotations.initMocks(this);
 
-        String[] fakeInputStreamData = {
-                generateFakeInputData(1, 10, 20),
-                generateFakeInputData(2, 20, 28),
-                generateFakeInputData(3, 30, 41)};
-        when(mockResourceFileHelper.getResourceFileAsInputStream(anyString())).thenReturn(Arrays.stream(fakeInputStreamData));
+        setupFakeInputStreamFromResourceFile(null);
 
         mockLogger = mock(Logger.class);
         subject.logger = mockLogger;
@@ -53,16 +50,21 @@ public class WeatherDataProcessorTest {
 
     @Test
     public void basicLoggingTestVariation() throws IOException, URISyntaxException {
-        String[] fakeInputStreamData = {
-                generateFakeInputData(1, 10, 20),
-                generateFakeInputData(2, 20, 28),
-                generateFakeInputData(3, 28, 41),
-                generateFakeInputData(4, 41, 42)
-        };
-        when(mockResourceFileHelper.getResourceFileAsInputStream(anyString())).thenReturn(Arrays.stream(fakeInputStreamData));
+        setupFakeInputStreamFromResourceFile(generateFakeInputData(4, 41, 42));
 
         subject.outputDayWithSmallestTemperatureSpread();
         verify(mockLogger).info("Day 4 of the month had the least variation");
+    }
+
+    private void setupFakeInputStreamFromResourceFile(String additionalDataToAppend) throws URISyntaxException, IOException {
+        List<String> fakeInputStreamData = new ArrayList<>();
+        fakeInputStreamData.add(generateFakeInputData(1, 10, 20));
+        fakeInputStreamData.add(generateFakeInputData(2, 20, 28));
+        fakeInputStreamData.add(generateFakeInputData(3, 30, 41));
+        if (additionalDataToAppend != null) {
+            fakeInputStreamData.add(additionalDataToAppend);
+        }
+        when(mockResourceFileHelper.getResourceFileAsInputStream(anyString())).thenReturn(fakeInputStreamData.stream());
     }
 
     private String generateFakeInputData(Integer dayOfMonth, Integer lowTemp, Integer highTemp) {
