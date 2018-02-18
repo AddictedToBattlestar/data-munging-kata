@@ -23,14 +23,20 @@ public class WeatherDataProcessor {
     public void outputDayWithSmallestTemperatureSpread() throws IOException, URISyntaxException {
         lineWithSmallestTemperatureSpread = null;
         try (Stream<String> fileData = resourceFileHelper.getResourceFileAsInputStream(weatherDatFileLocation)) {
-            fileData.forEach((lineStringData) -> {
-                List<Integer> lineData = parseLineData(lineStringData);
-                if (isNewLineShorter(lineData)) {
-                    lineWithSmallestTemperatureSpread = lineData;
-                }
-            });
+            fileData.forEach(this::parseAndEvaluateLineData);
         }
         logger.info(String.format("Day %1$s of the month had the least variation", lineWithSmallestTemperatureSpread.get(0).toString()));
+    }
+
+    private void parseAndEvaluateLineData(String lineStringData) {
+        try {
+            List<Integer> lineData = parseLineData(lineStringData);
+            if (isNewLineShorter(lineData)) {
+                lineWithSmallestTemperatureSpread = lineData;
+            }
+        } catch (Exception ex) {
+            logger.warn("Unable to parse line: " + lineStringData);
+        }
     }
 
     private boolean isNewLineShorter(List<Integer> newLineData) {
@@ -39,9 +45,13 @@ public class WeatherDataProcessor {
 
     private List<Integer> parseLineData(String lineData) {
         List<Integer> lineDataValues = new ArrayList<>();
-        lineDataValues.add(Integer.parseInt(lineData.substring(0, 4).trim()));
-        lineDataValues.add(Integer.parseInt(lineData.substring(4, 8).trim()));
-        lineDataValues.add(Integer.parseInt(lineData.substring(8, 14).trim()));
+        lineDataValues.add(getValueFromLineData(lineData, 0, 4));
+        lineDataValues.add(getValueFromLineData(lineData, 4, 8));
+        lineDataValues.add(getValueFromLineData(lineData, 8, 14));
         return lineDataValues;
+    }
+
+    private int getValueFromLineData(String lineData, int beginIndex, int endIndex) {
+        return Integer.parseInt(lineData.replace("*"," ").substring(beginIndex, endIndex).trim());
     }
 }

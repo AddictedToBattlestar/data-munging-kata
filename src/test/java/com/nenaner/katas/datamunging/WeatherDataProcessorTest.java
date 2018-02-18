@@ -39,37 +39,59 @@ public class WeatherDataProcessorTest {
     @Test
     public void itPullsFromTheDataFile() throws IOException, URISyntaxException {
         subject.outputDayWithSmallestTemperatureSpread();
+
         verify(mockResourceFileHelper).getResourceFileAsInputStream(WeatherDataProcessor.weatherDatFileLocation);
     }
 
     @Test
     public void basicLoggingTest() throws IOException, URISyntaxException {
         subject.outputDayWithSmallestTemperatureSpread();
+
         verify(mockLogger).info("Day 2 of the month had the least variation");
     }
 
     @Test
     public void basicLoggingTestVariation() throws IOException, URISyntaxException {
-        setupFakeInputStreamFromResourceFile(generateFakeInputData(4, 41, 42));
+        setupFakeInputStreamFromResourceFile(generateFakeInputData("4", "41", 42));
 
         subject.outputDayWithSmallestTemperatureSpread();
+
+        verify(mockLogger).info("Day 4 of the month had the least variation");
+    }
+
+    @Test
+    public void itHandlesTheSummaryRecordAtTheEnd() throws IOException, URISyntaxException {
+        setupFakeInputStreamFromResourceFile(generateFakeInputData("mo", "41", 42));
+
+        subject.outputDayWithSmallestTemperatureSpread();
+
+        verify(mockLogger).info("Day 2 of the month had the least variation");
+    }
+
+    @Test
+    public void itRemovesUndesirableCharacters() throws IOException, URISyntaxException {
+        setupFakeInputStreamFromResourceFile(generateFakeInputData("4", "41*", 42));
+
+        subject.outputDayWithSmallestTemperatureSpread();
+
+        verify(mockLogger, never()).warn(anyString());
         verify(mockLogger).info("Day 4 of the month had the least variation");
     }
 
     private void setupFakeInputStreamFromResourceFile(String additionalDataToAppend) throws URISyntaxException, IOException {
         List<String> fakeInputStreamData = new ArrayList<>();
-        fakeInputStreamData.add(generateFakeInputData(1, 10, 20));
-        fakeInputStreamData.add(generateFakeInputData(2, 20, 28));
-        fakeInputStreamData.add(generateFakeInputData(3, 30, 41));
+        fakeInputStreamData.add(generateFakeInputData("1", "10", 20));
+        fakeInputStreamData.add(generateFakeInputData("2", "20", 28));
+        fakeInputStreamData.add(generateFakeInputData("3", "30", 41));
         if (additionalDataToAppend != null) {
             fakeInputStreamData.add(additionalDataToAppend);
         }
         when(mockResourceFileHelper.getResourceFileAsInputStream(anyString())).thenReturn(fakeInputStreamData.stream());
     }
 
-    private String generateFakeInputData(Integer dayOfMonth, Integer lowTemp, Integer highTemp) {
-        return StringUtils.leftPad(dayOfMonth.toString(), 4) +
-                StringUtils.leftPad(lowTemp.toString(), 4) +
+    private String generateFakeInputData(String dayOfMonth, String lowTemp, Integer highTemp) {
+        return StringUtils.leftPad(dayOfMonth, 4) +
+                StringUtils.leftPad(lowTemp, 4) +
                 StringUtils.leftPad(highTemp.toString(), 6);
     }
 }
