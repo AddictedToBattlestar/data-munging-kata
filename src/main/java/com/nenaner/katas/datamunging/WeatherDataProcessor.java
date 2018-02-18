@@ -30,7 +30,7 @@ public class WeatherDataProcessor {
                 }
             });
         }
-        logger.info(lineWithSmallestTemperatureSpread.get(0).toString());
+        logger.info(String.format("Day %1$s of the month had the least variation", lineWithSmallestTemperatureSpread.get(0).toString()));
     }
 
     private boolean isNewLineShorter(List<Integer> newLineData) {

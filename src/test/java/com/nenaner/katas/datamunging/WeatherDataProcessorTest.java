@@ -48,7 +48,7 @@ public class WeatherDataProcessorTest {
     @Test
     public void basicLoggingTest() throws IOException, URISyntaxException {
         subject.outputDayWithSmallestTemperatureSpread();
-        verify(mockLogger).info("2");
+        verify(mockLogger).info("Day 2 of the month had the least variation");
     }
 
     @Test
@@ -62,7 +62,7 @@ public class WeatherDataProcessorTest {
         when(mockResourceFileHelper.getResourceFileAsInputStream(anyString())).thenReturn(Arrays.stream(fakeInputStreamData));
 
         subject.outputDayWithSmallestTemperatureSpread();
-        verify(mockLogger).info("4");
+        verify(mockLogger).info("Day 4 of the month had the least variation");
     }
 
     private String generateFakeInputData(Integer dayOfMonth, Integer lowTemp, Integer highTemp) {
