@@ -42,11 +42,27 @@ public class SoccerLeagueProcessorTest {
         verify(mockResourceFileHelper).getResourceFileAsInputStream(SoccerLeagueProcessor.soccerLeagueDatFileLocation);
     }
 
+    @Test
+    public void basicLoggingTest() throws IOException, URISyntaxException {
+        subject.outputTeamWithSmallestPointSpread();
+
+        verify(mockLogger).info("Team 2 had the least variation");
+    }
+
+    @Test
+    public void basicLoggingTestVariation() throws IOException, URISyntaxException {
+        setupFakeInputStreamFromResourceFile(generateFakeInputData("Team 4", 41, 40));
+
+        subject.outputTeamWithSmallestPointSpread();
+
+        verify(mockLogger).info("Day 4 of the month had the least variation");
+    }
+
     private void setupFakeInputStreamFromResourceFile(String additionalDataToAppend) throws URISyntaxException, IOException {
         List<String> fakeInputStreamData = new ArrayList<>();
-        fakeInputStreamData.add(generateFakeInputData("team 1", 20, 10));
-        fakeInputStreamData.add(generateFakeInputData("team 2", 28, 20));
-        fakeInputStreamData.add(generateFakeInputData("team 3", 41, 30));
+        fakeInputStreamData.add(generateFakeInputData("Team 1", 20, 10));
+        fakeInputStreamData.add(generateFakeInputData("Team 2", 28, 20));
+        fakeInputStreamData.add(generateFakeInputData("Team 3", 41, 30));
         if (additionalDataToAppend != null) {
             fakeInputStreamData.add(additionalDataToAppend);
         }
