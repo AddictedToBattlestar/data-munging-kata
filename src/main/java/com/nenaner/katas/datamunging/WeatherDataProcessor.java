@@ -7,51 +7,37 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 @Component
-public class WeatherDataProcessor {
+public class WeatherDataProcessor extends LowestSpreadProcessor {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     static final String weatherDatFileLocation = "weather.dat";
-    private List<Integer> lineWithSmallestTemperatureSpread;
 
     @Autowired
     private ResourceFileHelper resourceFileHelper;
 
     public void outputDayWithSmallestTemperatureSpread() throws IOException, URISyntaxException {
-        lineWithSmallestTemperatureSpread = null;
-        try (Stream<String> fileData = resourceFileHelper.getResourceFileAsInputStream(weatherDatFileLocation)) {
-            fileData.forEach(this::parseAndEvaluateLineData);
-        }
-        logger.info(String.format("Day %1$s of the month had the least variation", lineWithSmallestTemperatureSpread.get(0).toString()));
+        super.resourceFileHelper = this.resourceFileHelper;
+        super.findLowestSpread(weatherDatFileLocation);
     }
 
-    private void parseAndEvaluateLineData(String lineStringData) {
-        try {
-            List<Integer> lineData = parseLineData(lineStringData);
-            if (doesLineHaveShorterTemperatureSpread(lineData)) {
-                lineWithSmallestTemperatureSpread = lineData;
-            }
-        } catch (Exception ex) {
-            logger.warn("Unable to parse line: " + lineStringData);
-        }
+    @Override
+    void outputComparisonResult(RangeEntity rangeEntityWithLowestSpread) {
+        logger.info(String.format("Day %1$s of the month had the least variation", rangeEntityWithLowestSpread.getEntityName()));
     }
 
-    private boolean doesLineHaveShorterTemperatureSpread(List<Integer> newLineData) {
-        return lineWithSmallestTemperatureSpread == null || (lineWithSmallestTemperatureSpread.get(1) - lineWithSmallestTemperatureSpread.get(2) > (newLineData.get(1) - newLineData.get(2)));
+    @Override
+    RangeEntity parseEntity(String lineStringData) {
+        RangeEntity rangeEntity = new RangeEntity(
+                getValueFromLineData(lineStringData, 1, 4).toString(),
+                getValueFromLineData(lineStringData, 4, 8),
+                getValueFromLineData(lineStringData, 8, 14),
+                lineStringData
+        );
+        return rangeEntity;
     }
 
-    private List<Integer> parseLineData(String lineData) {
-        List<Integer> lineDataValues = new ArrayList<>();
-        lineDataValues.add(getValueFromLineData(lineData, 0, 4));
-        lineDataValues.add(getValueFromLineData(lineData, 4, 8));
-        lineDataValues.add(getValueFromLineData(lineData, 8, 14));
-        return lineDataValues;
-    }
-
-    private int getValueFromLineData(String lineData, int beginIndex, int endIndex) {
-        return Integer.parseInt(lineData.replace("*"," ").substring(beginIndex, endIndex).trim());
+    private Integer getValueFromLineData(String lineData, int beginIndex, int endIndex) {
+        return Integer.parseInt(lineData.replace("*", " ").substring(beginIndex, endIndex).trim());
     }
 }
