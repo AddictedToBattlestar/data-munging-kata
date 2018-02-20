@@ -79,15 +79,13 @@ public class SoccerLeagueProcessorTest {
     }
 
     private String generateFakeInputData(String teamName, Integer scoredForTeam, Integer scoredAgainstTeam) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(createDeadFiller(7));
-        stringBuilder.append(StringUtils.rightPad(teamName, 16));
-        stringBuilder.append(createDeadFiller(17));
-        stringBuilder.append(StringUtils.leftPad(scoredForTeam.toString(), 6));
-        stringBuilder.append(createDeadFiller(3));
-        stringBuilder.append(StringUtils.leftPad(scoredAgainstTeam.toString(), 4));
-        stringBuilder.append(createDeadFiller(6));
-        return stringBuilder.toString();
+        return createDeadFiller(7) +
+                StringUtils.rightPad(teamName, 16) +
+                createDeadFiller(17) +
+                StringUtils.leftPad(scoredForTeam.toString(), 6) +
+                createDeadFiller(3) +
+                StringUtils.leftPad(scoredAgainstTeam.toString(), 4) +
+                createDeadFiller(6);
     }
 
     private String createDeadFiller(int numberOfFillerCharacters) {

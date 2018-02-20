@@ -60,7 +60,7 @@ public class WeatherDataProcessorTest {
     }
 
     @Test
-    public void itHandlesTheSummaryRecordAtTheEnd() throws IOException, URISyntaxException {
+    public void itHandlesUnparsableRecordsGracefully() throws IOException, URISyntaxException {
         setupFakeInputStreamFromResourceFile(generateFakeInputData("mo", "41", 40));
 
         subject.outputDayWithSmallestTemperatureSpread();
