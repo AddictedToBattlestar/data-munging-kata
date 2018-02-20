@@ -12,8 +12,12 @@ public class Runner implements CommandLineRunner {
     @Autowired
     private WeatherDataProcessor weatherDataProcessor;
 
+    @Autowired
+    private SoccerLeagueProcessor soccerLeagueProcessor;
+
     @Override
     public void run(String... args) throws IOException, URISyntaxException {
         weatherDataProcessor.outputDayWithSmallestTemperatureSpread();
+        soccerLeagueProcessor.outputTeamWithSmallestPointSpread();
     }
 }

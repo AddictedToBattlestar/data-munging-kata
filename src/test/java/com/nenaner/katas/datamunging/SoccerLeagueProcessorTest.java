@@ -46,7 +46,7 @@ public class SoccerLeagueProcessorTest {
     public void basicLoggingTest() throws IOException, URISyntaxException {
         subject.outputTeamWithSmallestPointSpread();
 
-        verify(mockLogger).info("Team 2 had the least variation");
+        verify(mockLogger).info("Team \"Team 2\" had the least variation");
     }
 
     @Test
@@ -55,7 +55,16 @@ public class SoccerLeagueProcessorTest {
 
         subject.outputTeamWithSmallestPointSpread();
 
-        verify(mockLogger).info("Day 4 of the month had the least variation");
+        verify(mockLogger).info("Team \"Team 4\" had the least variation");
+    }
+
+    @Test
+    public void itHandlesUnparsableRecordsGracefully() throws IOException, URISyntaxException {
+        setupFakeInputStreamFromResourceFile(createDeadFiller(59));
+
+        subject.outputTeamWithSmallestPointSpread();
+
+        verify(mockLogger).info("Team \"Team 2\" had the least variation");
     }
 
     private void setupFakeInputStreamFromResourceFile(String additionalDataToAppend) throws URISyntaxException, IOException {
@@ -71,9 +80,9 @@ public class SoccerLeagueProcessorTest {
 
     private String generateFakeInputData(String teamName, Integer scoredForTeam, Integer scoredAgainstTeam) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(createDeadFiller(8));
+        stringBuilder.append(createDeadFiller(7));
         stringBuilder.append(StringUtils.rightPad(teamName, 16));
-        stringBuilder.append(createDeadFiller(16));
+        stringBuilder.append(createDeadFiller(17));
         stringBuilder.append(StringUtils.leftPad(scoredForTeam.toString(), 6));
         stringBuilder.append(createDeadFiller(3));
         stringBuilder.append(StringUtils.leftPad(scoredAgainstTeam.toString(), 4));
