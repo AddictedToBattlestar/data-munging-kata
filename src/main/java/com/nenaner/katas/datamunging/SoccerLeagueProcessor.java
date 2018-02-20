@@ -28,12 +28,11 @@ public class SoccerLeagueProcessor extends LowestSpreadProcessor {
 
     @Override
     RangeEntity parseEntity(String lineStringData) {
-        RangeEntity rangeEntity = new RangeEntity(
+        return new RangeEntity(
                 lineStringData.substring(7, 23).trim(),
                 Integer.parseInt(lineStringData.substring(40, 46).trim()),
                 Integer.parseInt(lineStringData.substring(49, 53).trim()),
                 lineStringData
         );
-        return rangeEntity;
     }
 }

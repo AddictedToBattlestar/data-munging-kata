@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-public abstract class LowestSpreadProcessor {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-    RangeEntity currentRecordWithLowestSpread;
+abstract class LowestSpreadProcessor {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private RangeEntity currentRecordWithLowestSpread;
 
     ResourceFileHelper resourceFileHelper;
 
@@ -38,7 +38,6 @@ public abstract class LowestSpreadProcessor {
 
     private boolean doesLineHaveShorterSpread(RangeEntity rangeEntity) {
         return currentRecordWithLowestSpread == null || (getRangeEntitySpread(currentRecordWithLowestSpread) > getRangeEntitySpread(rangeEntity));
-
     }
 
     private int getRangeEntitySpread(RangeEntity rangeEntity) {

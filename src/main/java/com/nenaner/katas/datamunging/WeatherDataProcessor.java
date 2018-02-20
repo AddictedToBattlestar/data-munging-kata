@@ -28,13 +28,12 @@ public class WeatherDataProcessor extends LowestSpreadProcessor {
 
     @Override
     RangeEntity parseEntity(String lineStringData) {
-        RangeEntity rangeEntity = new RangeEntity(
+        return new RangeEntity(
                 getValueFromLineData(lineStringData, 1, 4).toString(),
                 getValueFromLineData(lineStringData, 4, 8),
                 getValueFromLineData(lineStringData, 8, 14),
                 lineStringData
         );
-        return rangeEntity;
     }
 
     private Integer getValueFromLineData(String lineData, int beginIndex, int endIndex) {
